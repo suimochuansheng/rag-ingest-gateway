@@ -1,0 +1,66 @@
+[project]
+name = "adaptive-search-rag-ingest-gateway"
+version = "0.1.0"
+description = "AdaptiveSearchAgent 子服务 - RAG 文档摄入网关，提供完整多模态文档预处理、OCR 文字提取与图像语义识别能力。"
+authors = [
+    {name = "suimo", email = "huazhu7k7k@163.com"}
+]
+license = "Proprietary"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    # 核心文档解析（锁定当前版本）
+
+    # 深度学习与大模型底层
+    "torch >= 2.12.0",
+    "torchvision >= 0.17.0",
+    "transformers (>=5.14.1,<6.0.0)",
+    "accelerate >= 0.25.0",
+
+    # 服务网关核心 (API/Web)
+    "fastapi >= 0.110.0",
+    "uvicorn >= 0.20.0",
+    "python-multipart >= 0.0.9",
+    "pydantic >= 2.0.0, < 3.0.0",
+
+    # RAG 及 LLM API 客户端
+    "langchain-core >= 0.1.0",
+    "langchain-text-splitters >= 0.1.0",
+    "openai >= 1.0.0",
+    "anthropic >= 0.15.0",
+    "google-genai >= 0.1.0",
+    "dashscope >= 1.20.0",
+
+    # 图像与 PDF 辅助处理（代码中直接调用）
+    "pdf2image >= 1.17.0",
+    "opencv-python >= 4.9.0",
+    "pillow >= 10.0.0",
+
+    # 通用网络与基础环境
+    "python-dotenv >= 1.0.0",
+    "httpx >= 0.25.0",
+    "psycopg[binary] (>=3.3.4,<4.0.0)",
+    "pgvector (>=0.5.0,<0.6.0)",
+    "docling (>=2.0.0,<3.0.0)",
+    "requests (>=2.34.2,<3.0.0)",
+    "flashrank (>=0.2.10,<0.3.0)",
+    "flagembedding (>=1.4.0,<2.0.0)",
+]
+
+# === 添加下面这行配置 ===
+[tool.poetry]
+package-mode = false
+
+[tool.pytest.ini_options]
+# 自动检测 async 测试函数，无需显式 @pytest.mark.asyncio
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "pytest-html (>=4.2.0,<5.0.0)",
+    "pytest-asyncio (>=1.4.0,<2.0.0)"
+]

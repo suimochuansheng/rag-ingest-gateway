@@ -1,0 +1,1 @@
+TRUNCATE TABLE knowledge_embeddings_bgem3;
