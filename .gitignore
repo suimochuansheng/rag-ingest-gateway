@@ -20,6 +20,9 @@ logs/
 # pytest / 缓存
 .pytest_cache/
 
+# 测试报告（pytest / score threshold 等生成的输出产物）
+tests/test_report/
+
 # 运行产物 / 调试产物（每次运行生成的带时间戳快照与 docling 调试输出）
 phase1/snapshots/
 phase1/debug_cleaned/
