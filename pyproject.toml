@@ -45,6 +45,7 @@ dependencies = [
     "flashrank (>=0.2.10,<0.3.0)",
     "flagembedding (>=1.4.0,<2.0.0)",
     "sentry-sdk (>=2.68.0,<3.0.0)",
+    "python-json-logger (>=4.1.0,<5.0.0)",
 ]
 
 # === 添加下面这行配置 ===

@@ -29,7 +29,6 @@ from src.storage.vector_store import VectorStore
 from scripts.ingest_knowledge import run_ingest_pipeline
 
 logger = logging.getLogger("rag-ingest.api")
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(levelname)s %(message)s")
 
 # ═══════════════════════════════════════════════════════════════════
 # 基础配置
