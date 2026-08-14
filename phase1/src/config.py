@@ -69,6 +69,10 @@ class Settings(BaseSettings):
     # ── reranker ────────────────────────────────────────────
     RERANKER_NAME: str = ""
     RERANKER_CACHE_DIR: str = "/tmp/flashrank_cache"
+
+    # ── Sentry 崩溃自动捕获 ────────────────────────────────
+    SENTRY_DSN: str = ""
+    ENV: str = "dev"
     
 
 # 全局单例，项目各处从此导入

@@ -56,6 +56,10 @@ class Settings(BaseSettings):
     SERVICE_HOST: str = "0.0.0.0"
     SERVICE_PORT: int = 8100
 
+    # Sentry 崩溃自动捕获
+    SENTRY_DSN: str = ""  # 为空则不启用
+    ENV: str = "dev"
+
 
 settings = Settings()
 
@@ -93,6 +97,17 @@ class IngestResponse(BaseModel):
 # ═══════════════════════════════════════════════════════════════════
 # FastAPI 应用
 # ═══════════════════════════════════════════════════════════════════
+
+# Sentry 崩溃自动捕获（仅当配置了 DSN 时启用）
+import sentry_sdk
+
+if settings.SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=settings.SENTRY_DSN,
+        traces_sample_rate=1.0,
+        environment=settings.ENV,
+    )
+    logger.info("✅ Sentry 已启用 (environment=%s)", settings.ENV)
 
 app = FastAPI(
     title="RAG Ingest Gateway",
