@@ -23,7 +23,7 @@ _SEPARATORS = ["\n\n", "\n", "。", "！", "？", "；", " ", ""]
 _HEADING_RE = re.compile(r"^#{1,6}\s")
 # 提取首行标题：匹配 "# 标题" 或 "## 标题" 直到下一个换行
 _HEADING_EXTRACT_RE = re.compile(r"^(#{1,6}\s+.+?)(?:\n\n|\n|$)", re.MULTILINE)
-# 表格行识别：行首尾均为 | 
+# 表格行识别：行首尾均为 |
 _TABLE_LINE_RE = re.compile(r"^\s*\|.+\|\s*$")
 # 中文汉字间无意义空格
 _CJK_SPACE_RE = re.compile(r"(?<=[\u4e00-\u9fff])\s+(?=[\u4e00-\u9fff])")

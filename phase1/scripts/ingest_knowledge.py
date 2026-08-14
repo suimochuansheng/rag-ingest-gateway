@@ -5,8 +5,8 @@ Phase 1 离线文档摄入脚本
     python scripts/ingest_knowledge.py --file /path/to/document.pdf --kb_id default
     或被 api_main.py 作为模块导入: run_ingest_pipeline(content, filename, kb_id, task_id)
 """
-import sys
 import json
+import sys
 import uuid
 from pathlib import Path
 
@@ -14,12 +14,12 @@ from pathlib import Path
 src_path = Path(__file__).parent.parent / "src"
 sys.path.insert(0, str(src_path))
 
-from logger import get_logger
-
-import asyncio
 import argparse
+import asyncio
 import time
+
 from config import settings
+from logger import get_logger
 
 # ── 可选：资源监控（psutil 未安装时优雅降级）──
 try:
@@ -29,15 +29,15 @@ except ImportError:
     psutil = None  # type: ignore
     _PSUTIL_AVAILABLE = False
 
+from chunking.semantic_chunker import SemanticChunker
+from db_init import ensure_all_tables
+from embedding.embedder import OllamaEmbedder
 from loaders.docling_pdf_loader import DoclingPDFLoader
 from loaders.docx_loader import DocxLoader
 from loaders.excel_loader import ExcelLoader
 from loaders.markdown_loader import MarkdownLoader
-from chunking.semantic_chunker import SemanticChunker
-from embedding.embedder import OllamaEmbedder
-from storage.vector_store import VectorStore
 from snapshot import PipelineSnapshot
-from db_init import ensure_all_tables
+from storage.vector_store import VectorStore
 
 logger = get_logger(__name__)
 audit_logger = get_logger("audit")
@@ -283,10 +283,10 @@ async def _run_full_pipeline(raw_blocks, run_id, file_path, kb_id, doc_metadata,
         model_key = "bge-m3"
     else:
         model_key = "nomic-embed"
-    
+
     config = EMBEDDING_CONFIG[model_key]
     logger.info(f"使用模型: {config['ollama_model']}，表: knowledge_embeddings{config['table_suffix']}")
-    
+
     store = VectorStore(table_suffix=config["table_suffix"])
     await store.insert_many(
         chunks=chunks,

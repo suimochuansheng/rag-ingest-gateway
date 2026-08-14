@@ -1,7 +1,6 @@
 """集成测试 — 验证真实 Embedding + VectorStore 检索链路。"""
 
 import pytest
-
 from conftest import OLLAMA_UP, POSTGRES_UP
 
 # 数据库中实际存在的 kb_id

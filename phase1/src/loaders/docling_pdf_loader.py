@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 DOCLING PDF LOADER — IR 架构核心入口
 ====================================
@@ -94,23 +93,25 @@ DOCLING PDF LOADER — IR 架构核心入口
 DOCLING PDF LOADER — IR 架构核心入口
 ====================================
 """
-import hashlib
 import asyncio
-import httpx
+import hashlib
 import logging
 import os
 import re
 import tempfile
 from pathlib import Path
-from typing import List, Dict, Any, Tuple, Optional
+from typing import Any
 
-from .base import DocumentLoader
+import httpx
+
 # 导入 Docling 2.x 标准的输入格式枚举与格式包装器
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
 from docling_core.transforms.serializer.markdown import ImageRefMode
 from docling_core.types.doc.document import ContentLayer
+
+from .base import DocumentLoader
 
 # ── 可选依赖：AcceleratorOptions（Docling >=2.x）+ torch（GPU 检测）──
 try:
@@ -133,7 +134,7 @@ logger = logging.getLogger(__name__)
 class DoclingPDFLoader(DocumentLoader):
     def __init__(
         self,
-        debug_dir: Optional[str] = None,
+        debug_dir: str | None = None,
         enable_ocr: bool = False,
         ocr_lang: str = "chi_sim+eng",
         enable_table_structure: bool = True,
@@ -159,7 +160,7 @@ class DoclingPDFLoader(DocumentLoader):
         rows = re.findall(r'<tr>(.*?)</tr>', html_table, re.DOTALL)
         if not rows:
             return html_table  # 没找到表格，原样返回
-        
+
         table_rows = []
         for row in rows:
             # 提取所有 <td> 或 <th>
@@ -172,14 +173,14 @@ class DoclingPDFLoader(DocumentLoader):
                     cell_text = re.sub(r'<[^>]+>', '', cell).strip()
                     cleaned_cells.append(cell_text)
                 table_rows.append(cleaned_cells)
-        
+
         if not table_rows:
             return html_table
-        
+
         # 构建 Markdown Table
         col_count = len(table_rows[0])
         md_lines = []
-        
+
         # 表头（第一行）
         md_lines.append("| " + " | ".join(table_rows[0]) + " |")
         # 分隔线
@@ -190,10 +191,10 @@ class DoclingPDFLoader(DocumentLoader):
             while len(row) < col_count:
                 row.append("")
             md_lines.append("| " + " | ".join(row) + " |")
-        
+
         return "\n".join(md_lines)
 
-    def _parse_pdf_sync(self, content: bytes) -> Tuple[str, Dict[str, Any], str]:
+    def _parse_pdf_sync(self, content: bytes) -> tuple[str, dict[str, Any], str]:
         """CPU-bound: 使用 Docling 解析 PDF 并导出 Markdown（在 to_thread 中运行）。
 
         Returns:
@@ -240,7 +241,7 @@ class DoclingPDFLoader(DocumentLoader):
         doc = result.document
 
         # 提取元数据（2.x 兼容）
-        doc_metadata: Dict[str, Any] = {
+        doc_metadata: dict[str, Any] = {
             "title": "Unknown",
             "author": "Unknown",
             "total_pages": 0,
@@ -296,7 +297,7 @@ class DoclingPDFLoader(DocumentLoader):
         return full_markdown, doc_metadata, tmp_path
 
     async def _download_web_images(
-        self, full_markdown: str, doc_metadata: Dict[str, Any],
+        self, full_markdown: str, doc_metadata: dict[str, Any],
     ) -> str:
         """I/O-bound: 异步下载 Markdown 中的网络图片到本地。
 
@@ -312,7 +313,7 @@ class DoclingPDFLoader(DocumentLoader):
         web_images_dir = Path(self.debug_dir) / "web_images"
         web_images_dir.mkdir(parents=True, exist_ok=True)
 
-        downloaded_cache: Dict[str, str] = {}
+        downloaded_cache: dict[str, str] = {}
 
         async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
             for alt, url in url_matches:
@@ -355,7 +356,7 @@ class DoclingPDFLoader(DocumentLoader):
         doc_metadata["web_images_dir"] = str(web_images_dir)
         return full_markdown
 
-    async def load(self, content: bytes) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    async def load(self, content: bytes) -> tuple[list[dict[str, Any]], dict[str, Any]]:
         """异步入口：PDF 解析 (to_thread) → 网络图片下载 (await) → 后处理。
 
         1. CPU-bound Docling 解析 → asyncio.to_thread
@@ -388,7 +389,7 @@ class DoclingPDFLoader(DocumentLoader):
             content_hash = hashlib.md5(content[:4096]).hexdigest()[:8]
             debug_path = Path(self.debug_dir) / f"pdf_clean_{content_hash}.md"
             with open(debug_path, "w", encoding="utf-8") as f:
-                f.write(f"# Docling 导出 - 图片已保存至 images/，页眉页脚已过滤\n\n")
+                f.write("# Docling 导出 - 图片已保存至 images/，页眉页脚已过滤\n\n")
                 f.write(full_markdown)
             logger.info(f"📝 调试输出已写入: {debug_path}")
 

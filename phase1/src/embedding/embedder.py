@@ -1,8 +1,8 @@
 # /rag_data_dispose/phase1/src/embedding/embedder.py
 import asyncio
-import httpx
 import logging
-from typing import List
+
+import httpx
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ class OllamaEmbedder:
         self.max_concurrent = max_concurrent
         self.embedding_url = f"{self.base_url}/api/embeddings"
 
-    async def embed_text(self, text: str) -> List[float]:
+    async def embed_text(self, text: str) -> list[float]:
         """单条文本向量化"""
         async with httpx.AsyncClient(timeout=60.0) as client:
             response = await client.post(
@@ -25,7 +25,7 @@ class OllamaEmbedder:
             data = response.json()
             return data.get("embedding", [])
 
-    async def embed_batch(self, texts: List[str]) -> List[List[float]]:
+    async def embed_batch(self, texts: list[str]) -> list[list[float]]:
         """批量向量化：并发调用 Ollama（Semaphore 限流）。
 
         相比串行方案，N 条文本的向量化耗时从 O(N) 降至 O(N/max_concurrent)。
@@ -41,7 +41,7 @@ class OllamaEmbedder:
 
         semaphore = asyncio.Semaphore(self.max_concurrent)
 
-        async def _embed_one(text: str) -> List[float]:
+        async def _embed_one(text: str) -> list[float]:
             async with semaphore:
                 return await self.embed_text(text)
 
@@ -50,7 +50,7 @@ class OllamaEmbedder:
             return_exceptions=True,
         )
 
-        embeddings: List[List[float]] = []
+        embeddings: list[list[float]] = []
         for i, result in enumerate(results):
             if isinstance(result, Exception):
                 raise RuntimeError(

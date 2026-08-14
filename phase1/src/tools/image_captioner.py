@@ -1,11 +1,10 @@
 # /rag_data_dispose/phase1/src/vision/image_captioner.py
-import aiohttp
 import os
-from typing import Optional
-import dashscope
 from http import HTTPStatus
-from config import settings
 from pathlib import Path
+
+import aiohttp
+import dashscope
 
 
 class ImageCaptioner:
@@ -46,11 +45,11 @@ class ImageCaptioner:
         # 如果已经是HTTP/HTTPS链接，直接返回
         if image_url.startswith(('http://', 'https://')):
             return image_url
-        
+
         # 如果是本地路径，转换为绝对路径
         if os.path.exists(image_url):
             return str(Path(image_url).resolve())
-        
+
         # 如果路径不存在，尝试基于当前工作目录补全
         # 这里可以根据你的文档路径进行更智能的处理
         return image_url
@@ -71,7 +70,7 @@ class ImageCaptioner:
         """
         # 预处理：确保路径有效
         image_url = self.resolve_image_path(image_url, alt=alt)
-        
+
 
         try:
             # 使用 DashScope 原生异步接口

@@ -1,7 +1,6 @@
 """API 接口测试 — 验证 /health 和 /api/v1/search 通信链路。"""
 
 import pytest
-
 from conftest import OLLAMA_UP
 
 

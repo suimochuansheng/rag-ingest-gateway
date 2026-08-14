@@ -39,7 +39,7 @@ class Settings(BaseSettings):
         description=".env 中变量名为 OLLAMA_EMBEDDING_MODEL，保持代码侧 EMBEDDING_MODEL 不变",
     )
     EMBEDDING_DIM: int = 768
-    
+
     # ── Chunking ────────────────────────────────────────────
     CHUNK_SIZE: int = 512
     CHUNK_OVERLAP: int = 100
@@ -73,7 +73,7 @@ class Settings(BaseSettings):
     # ── Sentry 崩溃自动捕获 ────────────────────────────────
     SENTRY_DSN: str = ""
     ENV: str = "dev"
-    
+
 
 # 全局单例，项目各处从此导入
 settings = Settings()

@@ -22,13 +22,13 @@ Pipeline Snapshot — 统一中间产物快照
 import json
 import time
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import Any
 
 
 class PipelineSnapshot:
     """将 Pipeline 任意阶段的统一数据结构写入快照文件"""
 
-    def __init__(self, base_dir: Optional[Path] = None):
+    def __init__(self, base_dir: Path | None = None):
         """
         Args:
             base_dir: 快照根目录，默认为 phase1/snapshots/
@@ -43,8 +43,8 @@ class PipelineSnapshot:
         self,
         stage: str,
         source_file: str,
-        blocks: List[Dict[str, Any]],
-        doc_metadata: Optional[Dict[str, Any]] = None,
+        blocks: list[dict[str, Any]],
+        doc_metadata: dict[str, Any] | None = None,
         elapsed: float = 0.0,
         ext: str = "",
     ):
@@ -95,11 +95,11 @@ class PipelineSnapshot:
         self,
         stage: str,
         source_file: str,
-        blocks: List[Dict[str, Any]],
-        doc_metadata: Dict[str, Any],
+        blocks: list[dict[str, Any]],
+        doc_metadata: dict[str, Any],
         elapsed: float,
         ext: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """组装完整快照字典"""
         normalized_blocks = self._normalize_blocks(blocks)
 
@@ -132,7 +132,7 @@ class PipelineSnapshot:
             },
         }
 
-    def _normalize_blocks(self, blocks: List[Dict]) -> List[Dict[str, Any]]:
+    def _normalize_blocks(self, blocks: list[dict]) -> list[dict[str, Any]]:
         """
         将 Loader 或 Chunker 产出的块统一为 {index, page_num, text, metadata}。
 
@@ -150,7 +150,7 @@ class PipelineSnapshot:
             })
         return result
 
-    def _write_readable(self, snapshot: Dict, path: Path):
+    def _write_readable(self, snapshot: dict, path: Path):
         """
         生成人类可读的纯文本预览，方便 grep / 肉眼扫视排查问题。
 

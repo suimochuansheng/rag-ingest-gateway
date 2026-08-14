@@ -1,13 +1,14 @@
 # src/cleaners/markdown_cleaner.py
 import re
-from typing import Tuple, Dict, Any,List
+from typing import Any
+
 
 class MarkdownCleaner:
     def __init__(self):
-        self.image_paths: List[Dict] = []  # 存储所有图片信息
+        self.image_paths: list[dict] = []  # 存储所有图片信息
         self.image_counter = 0
 
-    async def clean(self, text: str) -> Tuple[str, Dict[str, Any]]:
+    async def clean(self, text: str) -> tuple[str, dict[str, Any]]:
         """
         异步清洗入口：适配 MarkdownLoader 的接口约定。
         输入: 原始 markdown 文本 (str)
@@ -25,9 +26,9 @@ class MarkdownCleaner:
         # 1.1 移除 YAML Frontmatter (包括有内容的和空的 --- 块)
         # 支持 sample.md 中的 "--- title: test ..." 以及空行包裹的 "--- \n title... \n ---"
         text, count = re.subn(
-            r"(?:\n|^)---[^\n]*\n(.*?)\n---(?:\s*\n|$)", 
-            "\n\n", 
-            text, 
+            r"(?:\n|^)---[^\n]*\n(.*?)\n---(?:\s*\n|$)",
+            "\n\n",
+            text,
             flags=re.DOTALL
         )
         clean_metadata["stripped_frontmatter_count"] += count
@@ -55,10 +56,10 @@ class MarkdownCleaner:
             placeholder = f"[IMG_{self.image_counter}]"
             if alt:
                 placeholder += f": {alt}"
-            
+
             self.image_counter += 1
             return placeholder
-        
+
         # extract_image中的match 参数是由 re.sub 在内部自动传递的，不需要你手动传参
         text, img_count = re.subn(r"!\[(.*?)\]\((.*?)\)", extract_image, text)
         clean_metadata["images_converted_count"] = img_count

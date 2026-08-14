@@ -1,6 +1,6 @@
 # src/db_init.py
 from storage.vector_store import VectorStore
-from config import settings
+
 
 async def ensure_all_tables():
     """应用启动/脚本运行前，统一初始化所有数据库表"""

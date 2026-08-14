@@ -1,6 +1,7 @@
 """RAG 检索工具 — 封装 Embedding + VectorStore 的端到端语义检索。"""
 
 import logging
+
 logger = logging.getLogger(__name__)
 import sys
 from pathlib import Path
@@ -75,8 +76,8 @@ EMBEDDING_CONFIG = {
 }
 
 async def search_knowledge(
-    query: str, 
-    top_k: int = 3, 
+    query: str,
+    top_k: int = 3,
     kb_id: str = "default",
     model: str = "nomic-embed",  # ★ 新增参数，用于指定使用的表
     search_mode: str = "vector",  # ★ "vector" | "hybrid" — 检索模式
@@ -98,13 +99,13 @@ async def search_knowledge(
         if model not in EMBEDDING_CONFIG:
             logger.warning(f"未知模型 {model}，回退到 nomic-embed")
             model = "nomic-embed"
-        
+
         config = EMBEDDING_CONFIG[model]
         ollama_model = config["ollama_model"]
         table_suffix = config["table_suffix"]
-        
+
         logger.info(f"使用 Embedding 模型: {ollama_model} (表后缀: {table_suffix})")
-        
+
         # 2. 生成查询向量（使用动态模型名）
         embedder = OllamaEmbedder(
             base_url=settings.OLLAMA_BASE_URL,

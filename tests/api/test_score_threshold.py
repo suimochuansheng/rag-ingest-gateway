@@ -5,10 +5,9 @@
 """
 
 import pytest
-
 from conftest import OLLAMA_UP, POSTGRES_UP
-from src.embedding.embedder import OllamaEmbedder
 from src.config import settings
+from src.embedding.embedder import OllamaEmbedder
 from src.storage.vector_store import VectorStore
 
 # 依赖真实 Ollama + PostgreSQL 的集成测试，环境不可用时跳过
@@ -19,7 +18,7 @@ pytestmark = pytest.mark.skipif(
 
 
 class TestScoreThreshold:
-    """相似度阈值过滤测试套件。""" 
+    """相似度阈值过滤测试套件。"""
 
     @pytest.mark.asyncio
     async def test_search_with_threshold_filtering(self):

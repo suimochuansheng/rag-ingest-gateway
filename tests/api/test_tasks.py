@@ -3,8 +3,8 @@
 import uuid
 
 import pytest
-
 from conftest import POSTGRES_UP
+
 # 复用 conftest.py 中的 sys.path 设置，直接导入 VectorStore
 from src.storage.vector_store import VectorStore
 

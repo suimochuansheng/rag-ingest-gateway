@@ -1,17 +1,16 @@
-import os
+import asyncio
 import logging
 import re
-import asyncio
-from typing import List, Dict, Any, Tuple, Optional
 from io import BytesIO
+from typing import Any
 
 import pdfplumber
 from pdfplumber.page import Page
 
 # OCR 依赖（安全导入）
 try:
-    from pdf2image import convert_from_bytes
     import pytesseract
+    from pdf2image import convert_from_bytes
     HAS_OCR_LIBS = True
 except ImportError:
     HAS_OCR_LIBS = False
@@ -57,7 +56,7 @@ class PDFLoader(DocumentLoader):
                 "如需使用，请安装: pip install pdf2image pytesseract，并确保系统有 tesseract 和 poppler。"
             )
 
-    async def load(self, content: bytes) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    async def load(self, content: bytes) -> tuple[list[dict[str, Any]], dict[str, Any]]:
         """加载并解析 PDF，返回标准化块列表和文档元数据"""
         def _sync_parse():
             blocks = []
@@ -93,11 +92,11 @@ class PDFLoader(DocumentLoader):
                         # 3. 智能扫描件判定
                         stripped = page_text.strip()
                         is_scanned = False
-                        
+
                         if len(stripped) < self.ocr_chars_threshold:
                             image_ratio = self._compute_image_area_ratio(page)
                             has_physical_images = len(page.images) > 0
-                            
+
                             if (image_ratio >= self.ocr_image_ratio_threshold) or (len(stripped) == 0 and has_physical_images):
                                 is_scanned = True
                                 if self.enable_ocr and HAS_OCR_LIBS:
@@ -116,7 +115,7 @@ class PDFLoader(DocumentLoader):
                             }
                         })
 
-                    logger.info(f"✅ PDF 解析完成，共 {len(blocks)} 页，含表格页数：{sum(1 for b in blocks if b['metadata']['tables_count'] > 0)}")    
+                    logger.info(f"✅ PDF 解析完成，共 {len(blocks)} 页，含表格页数：{sum(1 for b in blocks if b['metadata']['tables_count'] > 0)}")
             except Exception as e:
                 logger.exception("❌ PDF 解析失败")
                 raise RuntimeError(f"PDF 加载失败: {e}") from e
@@ -127,7 +126,7 @@ class PDFLoader(DocumentLoader):
     # ------------------------------------------------------------------
     # 核心算法：混合流提取（保持表格物理顺序）
     # ------------------------------------------------------------------
-    def _extract_mixed_flow(self, page: Page, tables: List) -> str:
+    def _extract_mixed_flow(self, page: Page, tables: list) -> str:
         page_height = page.height
         page_width = page.width
         last_y = 0
@@ -185,7 +184,7 @@ class PDFLoader(DocumentLoader):
             # 匹配特征 B: "一、", "二、" 等中文大纲
             # 匹配特征 C: "[左栏：向量检索与 Embedding 维度]" 这种专有标识栏
             is_header_pattern = re.match(
-                r"^(\d+[\.\s、]+|[\u4e00-\u9fa5一二三四五六七八九十]+[、\.\s]+|\[(左栏|右栏|正文|OCR).*\])", 
+                r"^(\d+[\.\s、]+|[\u4e00-\u9fa5一二三四五六七八九十]+[、\.\s]+|\[(左栏|右栏|正文|OCR).*\])",
                 line_stripped
             )
 
@@ -208,7 +207,7 @@ class PDFLoader(DocumentLoader):
     # ------------------------------------------------------------------
     # 列感知与水平行聚类文本提取
     # ------------------------------------------------------------------
-    def _extract_text_from_region(self, page: Page, bbox: Tuple[float, float, float, float], all_words: List[Dict[str, Any]]) -> str:
+    def _extract_text_from_region(self, page: Page, bbox: tuple[float, float, float, float], all_words: list[dict[str, Any]]) -> str:
         try:
             if not all_words:
                 return ""
@@ -225,22 +224,22 @@ class PDFLoader(DocumentLoader):
                 return ""
 
             filtered.sort(key=lambda w: w['x0'])
-            
+
             gaps = []
             for i in range(1, len(filtered)):
                 gap = filtered[i]['x0'] - filtered[i-1]['x1']
                 gaps.append((gap, i))
-                
+
             if not gaps:
                 return self._group_words_into_lines(filtered)
 
             max_gap, split_idx = max(gaps, key=lambda x: x[0])
             page_width = page.width
-            
+
             if max_gap > self.column_gap_ratio * page_width:
                 left_words = filtered[:split_idx]
                 right_words = filtered[split_idx:]
-                
+
                 if len(left_words) >= self.min_words_per_column and len(right_words) >= self.min_words_per_column:
                     left_text = self._group_words_into_lines(left_words)
                     right_text = self._group_words_into_lines(right_words)
@@ -253,7 +252,7 @@ class PDFLoader(DocumentLoader):
             crop = page.crop(bbox)
             return crop.extract_text() or ""
 
-    def _group_words_into_lines(self, words: List[Dict[str, Any]]) -> str:
+    def _group_words_into_lines(self, words: list[dict[str, Any]]) -> str:
         if not words:
             return ""
 
@@ -269,7 +268,7 @@ class PDFLoader(DocumentLoader):
             else:
                 current_line.sort(key=lambda w: w['x0'])
                 lines.append(" ".join([item['text'] for item in current_line]))
-                
+
                 current_line = [w]
                 current_top = w['top']
 
@@ -282,7 +281,7 @@ class PDFLoader(DocumentLoader):
     # ------------------------------------------------------------------
     # 表格 → Markdown
     # ------------------------------------------------------------------
-    def _table_to_markdown(self, table: List[List[Any]]) -> str:
+    def _table_to_markdown(self, table: list[list[Any]]) -> str:
         if not table or not table[0]:
             return ""
 
@@ -321,18 +320,18 @@ class PDFLoader(DocumentLoader):
         page_area = page.width * page.height
         if page_area == 0:
             return 0.0
-        
+
         total_img_area = 0.0
         for img in page.images:
             x0 = img.get('x0', img.get('x', 0))
             y0 = img.get('top', img.get('y0', 0))
             x1 = img.get('x1', x0 + img.get('width', 0))
             y1 = img.get('bottom', y0 + img.get('height', 0))
-            
+
             w = max(0.0, x1 - x0)
             h = max(0.0, y1 - y0)
             total_img_area += w * h
-            
+
         ratio = total_img_area / page_area
         return min(1.0, ratio)
 

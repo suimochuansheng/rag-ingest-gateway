@@ -11,6 +11,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 # ---------- 动态导入 api_main ----------
 # 将项目根加入 sys.path，确保 api_main 可被导入
 import sys
+
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "phase1" / "src"))
 sys.path.insert(0, str(PROJECT_ROOT / "phase1"))

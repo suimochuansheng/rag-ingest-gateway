@@ -1,11 +1,13 @@
 # 规则层   layer3
 import re
-from typing import Dict, Any
+from typing import Any
+
 from .base import Cleaner
+
 
 class RuleFilter(Cleaner):
     """规则层过滤：版权声明、测试占位符、空行"""
-    
+
     # 版权声明模式（可配置）
     COPYRIGHT_PATTERNS = [
         r'©\s*\d{4}.*All rights reserved.*',
@@ -14,7 +16,7 @@ class RuleFilter(Cleaner):
         r'License:.*MIT.*',
         r'Apache License.*',
     ]
-    
+
     # 测试占位符模式
     PLACEHOLDER_PATTERNS = [
         r'\[TODO:.*?\]',
@@ -23,16 +25,16 @@ class RuleFilter(Cleaner):
         r'FIXME\s*:.*',
         r'\[待补充.*?\]',
     ]
-    
-    async def clean(self, text: str, metadata: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
+
+    async def clean(self, text: str, metadata: dict[str, Any]) -> tuple[str, dict[str, Any]]:
         lines = text.split('\n')
         cleaned_lines = []
-        
+
         for line in lines:
             # 跳过空行（保留一个空行作为段落分隔，但连续空行压缩）
             if not line.strip():
                 continue
-            
+
             # 检查版权声明
             is_copyright = False
             for pattern in self.COPYRIGHT_PATTERNS:
@@ -42,7 +44,7 @@ class RuleFilter(Cleaner):
             if is_copyright:
                 metadata["removed_copyright"] = True
                 continue
-            
+
             # 检查测试占位符
             is_placeholder = False
             for pattern in self.PLACEHOLDER_PATTERNS:
@@ -52,8 +54,8 @@ class RuleFilter(Cleaner):
                     break
             if is_placeholder:
                 continue
-            
+
             cleaned_lines.append(line)
-        
+
         metadata["rule_filtered"] = True
         return '\n\n'.join(cleaned_lines), metadata  # 恢复单空行分隔

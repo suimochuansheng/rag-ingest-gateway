@@ -23,10 +23,9 @@ from fastapi import BackgroundTasks, FastAPI, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-from src.tools.rag import search_knowledge
-from src.storage.vector_store import VectorStore
 from scripts.ingest_knowledge import run_ingest_pipeline
+from src.storage.vector_store import VectorStore
+from src.tools.rag import search_knowledge
 
 logger = logging.getLogger("rag-ingest.api")
 

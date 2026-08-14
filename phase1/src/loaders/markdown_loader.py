@@ -2,10 +2,12 @@ import asyncio
 import logging
 import re
 from pathlib import Path
-from typing import List, Dict, Any
-from .base import DocumentLoader
-from cleaners.markdown_cleaner import MarkdownCleaner 
+from typing import Any
+
+from cleaners.markdown_cleaner import MarkdownCleaner
 from tools.image_captioner import ImageCaptioner
+
+from .base import DocumentLoader
 
 logger = logging.getLogger(__name__)
 
@@ -43,8 +45,8 @@ class MarkdownLoader(DocumentLoader):
     def _clean_chinese_spaces(text: str) -> str:
         """去除中文汉字之间异常的空格（"向 量" → "向量"）。"""
         return _CJK_SPACE_RE.sub("", text)
-    
-    async def load(self, content: bytes) -> tuple[List[Dict[str, Any]], Dict[str, Any]]:
+
+    async def load(self, content: bytes) -> tuple[list[dict[str, Any]], dict[str, Any]]:
         """
         解析 Markdown 文件，返回 (块列表, 文档级元数据)
         """
@@ -88,10 +90,10 @@ class MarkdownLoader(DocumentLoader):
 
             # ★ 关闭 DashScope 异步 HTTP 连接池
             await self.captioner.close_session()
-        
+
         # 按段落分割
         paragraphs = re.split(r'\n\s*\n', cleaned_text.strip())
-        
+
         blocks = []
         for idx, para in enumerate(paragraphs):
             para = para.strip()
@@ -142,6 +144,6 @@ class MarkdownLoader(DocumentLoader):
                 "text": clean_para,
                 "metadata": block_meta,
             })
-        
+
         # ★ 返回两个值：块列表 + 文档级元数据（包含所有图片信息）
         return blocks, clean_metadata

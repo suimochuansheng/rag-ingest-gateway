@@ -1,13 +1,11 @@
-import json
 import logging
 import re
 from collections import defaultdict
-from typing import List, Dict, Any, Optional
+from typing import Any
 
 import psycopg
-from pgvector.psycopg import register_vector_async
-
 from config import settings
+from pgvector.psycopg import register_vector_async
 
 # 配置日志格式（时间 + 级别 + 消息）
 logger = logging.getLogger(__name__)
@@ -57,26 +55,26 @@ class VectorStore:
         self.dsn = settings.POSTGRES_DSN
         self.table_suffix = table_suffix
         self.table_name = f"knowledge_embeddings{table_suffix}"
-        
+
         # 根据表名确定向量维度
         if "bgem3" in table_suffix:
             self.vector_dim = 1024
         else:
             self.vector_dim = 768
-    
+
     async def _get_connection(self):
         """获取异步数据库连接"""
         conn = await psycopg.AsyncConnection.connect(self.dsn)
         await conn.set_autocommit(True)
-        
+
         # 2. 先创建 extension，确保数据库中已存在 vector 类型
         await conn.execute("CREATE EXTENSION IF NOT EXISTS vector")
-        
+
         # 3. 使用 await 异步注册 vector 类型
         await register_vector_async(conn)
-        
+
         return conn
-    
+
     async def ensure_pipeline_jobs_table(self):
         """创建 pipeline_jobs 任务状态表（独立于 knowledge_embeddings）
            作用 ：任务状态与控制表（审计 + 异步任务管理）
@@ -104,9 +102,8 @@ class VectorStore:
 
     async def ensure_table(self):
         """确保 knowledge_embeddings 表存在（支持动态表名和向量维度）"""
-        async with await self._get_connection() as conn:
-            async with conn.cursor() as cur:
-                await cur.execute(f"""
+        async with await self._get_connection() as conn, conn.cursor() as cur:
+            await cur.execute(f"""
                     CREATE TABLE IF NOT EXISTS {self.table_name} (
                         id SERIAL PRIMARY KEY,
                         title TEXT,
@@ -117,23 +114,23 @@ class VectorStore:
                         created_at TIMESTAMP DEFAULT NOW()
                     )
                 """)
-                await cur.execute(f"""
+            await cur.execute(f"""
                     CREATE INDEX IF NOT EXISTS idx_kb_id_{self.table_suffix or 'default'} 
                     ON {self.table_name}(kb_id)
                 """)
-                await cur.execute(f"""
+            await cur.execute(f"""
                     CREATE INDEX IF NOT EXISTS idx_embedding_{self.table_suffix or 'default'} 
                     ON {self.table_name} 
                     USING ivfflat (embedding vector_cosine_ops) 
                     WITH (lists = 10)
                 """)
-                logger.info(f"✅ 表 {self.table_name} 已就绪 (维度: {self.vector_dim})")
-    
+            logger.info(f"✅ 表 {self.table_name} 已就绪 (维度: {self.vector_dim})")
+
     async def insert_many(
-        self, 
-        chunks: List[Dict[str, Any]], 
-        embeddings: List[List[float]], 
-        source_file: str, 
+        self,
+        chunks: list[dict[str, Any]],
+        embeddings: list[list[float]],
+        source_file: str,
         kb_id: str = "default"
     ):
         """
@@ -146,19 +143,19 @@ class VectorStore:
         """
         if len(chunks) != len(embeddings):
             raise ValueError(...)
-        
+
         await self.ensure_table()
-        
+
         async with await self._get_connection() as conn:
             async with conn.cursor() as cur:
                 for chunk, emb in zip(chunks, embeddings):
                     if not emb or len(emb) != self.vector_dim:
                         logger.warning(f"⚠️ 跳过无效向量: {len(emb) if emb else 0} 维 (期望 {self.vector_dim})")
                         continue
-                    
+
                     content = chunk.get("content", "")
                     title = chunk.get("metadata", {}).get("title", source_file)
-                    
+
                     # 中文 bigram 预处理后生成 tsvector，提升 BM25 对中文的检索效果
                     processed_content = _chinese_bigram_tokenize(content)
                     await cur.execute(f"""
@@ -166,26 +163,26 @@ class VectorStore:
                             (title, content, embedding, source_file, kb_id, content_tsv)
                         VALUES (%s, %s, %s, %s, %s, to_tsvector('simple', %s))
                     """, (title, content, emb, source_file, kb_id, processed_content))
-    
+
     async def search(
-        self, 
-        query_vector: List[float], 
-        kb_id: Optional[str] = None, 
+        self,
+        query_vector: list[float],
+        kb_id: str | None = None,
         top_k: int = 3,
-        score_threshold: Optional[float] = None
-    ) -> List[Dict]:
+        score_threshold: float | None = None
+    ) -> list[dict]:
         """相似度检索，支持动态表名"""
         if score_threshold is None:
             score_threshold = getattr(settings, 'SCORE_THRESHOLD', 0.65)
-        
+
         # 构建 WHERE 子句
         where_clause = ""
         params = [query_vector]
-        
+
         if kb_id:
             where_clause = f"WHERE {self.table_name}.kb_id = %s"
             params.append(kb_id)
-        
+
         # 使用 CTE 查询
         sql = f"""
             WITH ranked AS (
@@ -200,29 +197,28 @@ class VectorStore:
             LIMIT %s
         """
         params.extend([score_threshold, top_k])
-        
-        async with await self._get_connection() as conn:
-            async with conn.cursor() as cur:
-                await cur.execute(sql, params)
-                rows = await cur.fetchall()
-                
-                return [
-                    {
-                        "id": row[0],
-                        "content": row[1],
-                        "source_file": row[2],
-                        "kb_id": row[3],
-                        "similarity": row[4],
-                    }
-                    for row in rows
-                ]
+
+        async with await self._get_connection() as conn, conn.cursor() as cur:
+            await cur.execute(sql, params)
+            rows = await cur.fetchall()
+
+            return [
+                {
+                    "id": row[0],
+                    "content": row[1],
+                    "source_file": row[2],
+                    "kb_id": row[3],
+                    "similarity": row[4],
+                }
+                for row in rows
+            ]
 
     async def _bm25_search(
         self,
         query: str,
-        kb_id: Optional[str] = None,
+        kb_id: str | None = None,
         top_k: int = 10,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """基于 PostgreSQL tsvector 的 BM25 全文检索。
 
         对查询文本执行与入库时相同的中文 bigram 预处理，
@@ -251,30 +247,29 @@ class VectorStore:
         sql += " ORDER BY bm25_score DESC LIMIT %s"
         params.append(top_k)
 
-        async with await self._get_connection() as conn:
-            async with conn.cursor() as cur:
-                await cur.execute(sql, params)
-                rows = await cur.fetchall()
-                return [
-                    {
-                        "id": row[0],
-                        "content": row[1],
-                        "source_file": row[2],
-                        "kb_id": row[3],
-                        "bm25_score": row[4],
-                    }
-                    for row in rows
-                ]
+        async with await self._get_connection() as conn, conn.cursor() as cur:
+            await cur.execute(sql, params)
+            rows = await cur.fetchall()
+            return [
+                {
+                    "id": row[0],
+                    "content": row[1],
+                    "source_file": row[2],
+                    "kb_id": row[3],
+                    "bm25_score": row[4],
+                }
+                for row in rows
+            ]
 
     async def hybrid_search(
         self,
         query: str,
-        query_vector: List[float],
-        kb_id: Optional[str] = None,
+        query_vector: list[float],
+        kb_id: str | None = None,
         top_k: int = 3,
         score_threshold: float = 0.65,
         rrf_k: int = 60,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """混合检索：BM25 全文检索 + 向量语义检索，通过 RRF 融合结果。
 
         1. 向量检索（Top-10，放宽阈值保证候选集）
@@ -334,40 +329,38 @@ class VectorStore:
                     VALUES (%s, %s, %s, %s, NOW(), NOW())
                 """, (task_id, kb_id, source_file, status))
 
-    async def get_task_status(self, task_id: str) -> Optional[Dict]:
+    async def get_task_status(self, task_id: str) -> dict | None:
         """查询任务状态"""
-        async with await self._get_connection() as conn:
-            async with conn.cursor() as cur:
-                await cur.execute("""
+        async with await self._get_connection() as conn, conn.cursor() as cur:
+            await cur.execute("""
                     SELECT id, kb_id, source_file, status, error_message, created_at, updated_at
                     FROM pipeline_jobs
                     WHERE id = %s
                 """, (task_id,))
-                row = await cur.fetchone()
-                if row:
-                    return {
-                        "task_id": row[0],
-                        "kb_id": row[1],
-                        "source_file": row[2],
-                        "status": row[3],
-                        "error_message": row[4],
-                        "created_at": row[5],
-                        "updated_at": row[6]
-                    }
-                return None
+            row = await cur.fetchone()
+            if row:
+                return {
+                    "task_id": row[0],
+                    "kb_id": row[1],
+                    "source_file": row[2],
+                    "status": row[3],
+                    "error_message": row[4],
+                    "created_at": row[5],
+                    "updated_at": row[6]
+                }
+            return None
 
-    async def update_task_status(self, task_id: str, status: str, error_message: Optional[str] = None):
+    async def update_task_status(self, task_id: str, status: str, error_message: str | None = None):
         """更新任务状态"""
-        async with await self._get_connection() as conn:
-            async with conn.cursor() as cur:
-                if error_message:
-                    await cur.execute("""
+        async with await self._get_connection() as conn, conn.cursor() as cur:
+            if error_message:
+                await cur.execute("""
                         UPDATE pipeline_jobs 
                         SET status = %s, error_message = %s, updated_at = NOW()
                         WHERE id = %s
                     """, (status, error_message, task_id))
-                else:
-                    await cur.execute("""
+            else:
+                await cur.execute("""
                         UPDATE pipeline_jobs 
                         SET status = %s, updated_at = NOW()
                         WHERE id = %s
