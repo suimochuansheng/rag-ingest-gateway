@@ -4,10 +4,12 @@ RAG Ingest Gateway — 通信链路验证 API。
 独立 FastAPI 应用，用于验证微服务间的基础通信链路。
 """
 
+import hashlib
 import logging
 import sys
 import time
 import uuid
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 # 确保 phase1/src/ 可被导入（供 src.tools.rag 等模块使用）
@@ -21,6 +23,7 @@ if str(_SYS_ROOT / "phase1") not in sys.path:
 from dotenv import load_dotenv
 from fastapi import BackgroundTasks, FastAPI, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from scripts.ingest_knowledge import run_ingest_pipeline
@@ -107,10 +110,20 @@ if settings.SENTRY_DSN:
     )
     logger.info("✅ Sentry 已启用 (environment=%s)", settings.ENV)
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """应用启动时确保数据库表存在（knowledge_embeddings + pipeline_jobs）。"""
+    store = VectorStore()
+    await store.ensure_table()
+    await store.ensure_pipeline_jobs_table()
+    yield
+
+
 app = FastAPI(
     title="RAG Ingest Gateway",
     version="v1",
     description="AdaptiveSearchAgent 子服务 — RAG 文档摄入网关（通信链路验证）",
+    lifespan=lifespan,
 )
 
 # CORS 中间件 — 允许所有来源，便于调试
@@ -120,6 +133,13 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+# 静态文件目录 — 知识库管理独立页面（/static/upload.html）
+app.mount(
+    "/static",
+    StaticFiles(directory=str(Path(__file__).parent / "static")),
+    name="static",
 )
 
 
@@ -191,11 +211,13 @@ async def ingest(
 
     # 在 pipeline_jobs 中创建 PENDING 记录
     store = VectorStore()
+    file_hash = hashlib.sha256(content).hexdigest()
     await store.create_task(
         task_id=task_id,
         kb_id=kb_id,
         source_file=file.filename or "unknown",
         status="PENDING",
+        file_hash=file_hash,
     )
 
     # 将实际解析工作放入后台

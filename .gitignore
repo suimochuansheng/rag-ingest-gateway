@@ -33,3 +33,9 @@ phase1/data/images/
 # 误建的临时文件（.enva 疑似 .env 的笔误、含密钥片段；aaa.py 为草稿，均不入库）
 phase1/.enva
 phase1/src/loaders/aaa.py
+
+# 下载的开源文档数据（langgraph/fastapi 官方文档，仅用于摄入测试，不入库）
+phase1/data/open_source/
+
+# 流程梳理文档（一次性分析文档，不入库）
+RAG-core_execution_flow_IR.md

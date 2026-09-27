@@ -67,8 +67,11 @@ class VectorStore:
         conn = await psycopg.AsyncConnection.connect(self.dsn)
         await conn.set_autocommit(True)
 
-        # 2. 先创建 extension，确保数据库中已存在 vector 类型
-        await conn.execute("CREATE EXTENSION IF NOT EXISTS vector")
+        # 2. 先检查 vector 扩展是否存在，避免重复创建时触发 UniqueViolation
+        async with conn.cursor() as cur:
+            await cur.execute("SELECT 1 FROM pg_extension WHERE extname = 'vector'")
+            if not await cur.fetchone():
+                await cur.execute("CREATE EXTENSION vector")
 
         # 3. 使用 await 异步注册 vector 类型
         await register_vector_async(conn)
@@ -111,8 +114,14 @@ class VectorStore:
                         embedding vector({self.vector_dim}),
                         source_file TEXT,
                         kb_id VARCHAR(50) DEFAULT 'default',
+                        content_tsv tsvector,
                         created_at TIMESTAMP DEFAULT NOW()
                     )
+                """)
+            # 兼容旧表：若表已存在但缺少 content_tsv 列，则补齐（hybrid 检索 BM25 依赖该列）
+            await cur.execute(f"""
+                    ALTER TABLE {self.table_name}
+                    ADD COLUMN IF NOT EXISTS content_tsv tsvector
                 """)
             await cur.execute(f"""
                     CREATE INDEX IF NOT EXISTS idx_kb_id_{self.table_suffix or 'default'} 
@@ -123,6 +132,11 @@ class VectorStore:
                     ON {self.table_name} 
                     USING ivfflat (embedding vector_cosine_ops) 
                     WITH (lists = 10)
+                """)
+            # GIN 索引加速 BM25 全文检索（content_tsv @@ plainto_tsquery）
+            await cur.execute(f"""
+                    CREATE INDEX IF NOT EXISTS idx_content_tsv_{self.table_suffix or 'default'}
+                    ON {self.table_name} USING GIN (content_tsv)
                 """)
             logger.info(f"✅ 表 {self.table_name} 已就绪 (维度: {self.vector_dim})")
 
@@ -299,7 +313,9 @@ class VectorStore:
         bm25_results = await self._bm25_search(query, kb_id=kb_id, top_k=10)
 
         # 3. RRF 融合
-        scores: defaultdict[int, float] = defaultdict(float)
+        # 用 defaultdict(float)，同一个 id 在两路里出现就自动累加
+        # : defaultdict[int, float]  给mypy类型检查器看的
+        scores: defaultdict[int, float] = defaultdict(float) 
         for rank, r in enumerate(vector_results, 1):
             scores[r["id"]] += 1.0 / (rrf_k + rank)
         for rank, r in enumerate(bm25_results, 1):
@@ -320,14 +336,22 @@ class VectorStore:
 
     # ── pipeline_jobs 任务状态管理 ──────────────────────────────
 
-    async def create_task(self, task_id: str, kb_id: str, source_file: str, status: str = "PENDING"):
+    async def create_task(
+        self,
+        task_id: str,
+        kb_id: str,
+        source_file: str,
+        status: str = "PENDING",
+        file_hash: str = "",
+    ):
         """创建任务记录（pipeline_jobs 表不变）"""
         async with await self._get_connection() as conn:
             async with conn.cursor() as cur:
                 await cur.execute("""
-                    INSERT INTO pipeline_jobs (id, kb_id, source_file, status, created_at, updated_at)
-                    VALUES (%s, %s, %s, %s, NOW(), NOW())
-                """, (task_id, kb_id, source_file, status))
+                    INSERT INTO pipeline_jobs
+                        (id, kb_id, source_file, file_sha256, status, created_at, updated_at)
+                    VALUES (%s, %s, %s, %s, %s, NOW(), NOW())
+                """, (task_id, kb_id, source_file, file_hash, status))
 
     async def get_task_status(self, task_id: str) -> dict | None:
         """查询任务状态"""

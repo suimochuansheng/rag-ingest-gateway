@@ -945,7 +945,6 @@ description = "DocLang reference toolkit"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
-markers = "sys_platform != \"darwin\""
 files = [
     {file = "doclang-0.7.2-py3-none-any.whl", hash = "sha256:fa4414931122c6b9d18a8b1fd6cec3d0dd22dad4efec495ab4461240a8cdf7ed"},
     {file = "doclang-0.7.2.tar.gz", hash = "sha256:89c17a168ef9443c2f814284bae3ea3dbf2f1910e79d4fd6cbdde04aa7c06d40"},
@@ -960,40 +959,11 @@ schematron-saxon = ["saxonche (>=12.9.0)"]
 
 [[package]]
 name = "docling"
-version = "2.99.0"
-description = "SDK and CLI for parsing PDF, DOCX, HTML, and more, to a unified document representation for powering downstream workflows such as gen AI applications."
-optional = false
-python-versions = "<4.0,>=3.10"
-groups = ["main"]
-markers = "sys_platform == \"darwin\""
-files = [
-    {file = "docling-2.99.0-py3-none-any.whl", hash = "sha256:a78d4fd34e4ca495cd50003288b4de4a9b040dbff59f8ca5624aa8fa37d43728"},
-    {file = "docling-2.99.0.tar.gz", hash = "sha256:306ea071d935f3852f75c873fe1b8663da580d2c359b8de162da52a6151c4c91"},
-]
-
-[package.dependencies]
-docling-slim = {version = "2.99.0", extras = ["standard"]}
-
-[package.extras]
-asr = ["docling-slim[format-audio] (==2.99.0)"]
-easyocr = ["docling-slim[feat-ocr-easyocr] (==2.99.0)"]
-htmlrender = ["docling-slim[format-html-render] (==2.99.0)"]
-ocrmac = ["docling-slim[feat-ocr-mac] (==2.99.0)"]
-onnxruntime = ["docling-slim[models-onnxruntime] (==2.99.0)"]
-rapidocr = ["docling-slim[feat-ocr-rapidocr-onnx] (==2.99.0)"]
-remote-serving = ["docling-slim[models-remote] (==2.99.0)"]
-tesserocr = ["docling-slim[feat-ocr-tesserocr] (==2.99.0)"]
-vlm = ["docling-slim[models-vlm-inline] (==2.99.0)"]
-xbrl = ["docling-slim[format-xml-xbrl] (==2.99.0)"]
-
-[[package]]
-name = "docling"
 version = "2.111.0"
 description = "SDK and CLI for parsing PDF, DOCX, HTML, and more, to a unified document representation for powering downstream workflows such as gen AI applications."
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
-markers = "sys_platform != \"darwin\""
 files = [
     {file = "docling-2.111.0-py3-none-any.whl", hash = "sha256:6bc7f3bcd881f0a1c2a7aa85fe2021c2f33878601e84e730858b78012104d590"},
     {file = "docling-2.111.0.tar.gz", hash = "sha256:c8fdbf7e456cc0918dad117351debf9f314bfe8888f62fc4ec760a97824f75d2"},
@@ -1013,45 +983,6 @@ remote-serving = ["docling-slim[models-remote] (==2.111.0)"]
 tesserocr = ["docling-slim[feat-ocr-tesserocr] (==2.111.0)"]
 vlm = ["docling-slim[models-vlm-inline] (==2.111.0)"]
 xbrl = ["docling-slim[format-xml-xbrl] (==2.111.0)"]
-
-[[package]]
-name = "docling-core"
-version = "2.78.0"
-description = "A python library to define and validate data types in Docling."
-optional = false
-python-versions = "<4.0,>=3.10"
-groups = ["main"]
-markers = "sys_platform == \"darwin\""
-files = [
-    {file = "docling_core-2.78.0-py3-none-any.whl", hash = "sha256:69c0d67e87e4d3aec1509a758691a27e8ba0496f61a85ba705cc48a5b21ffe86"},
-    {file = "docling_core-2.78.0.tar.gz", hash = "sha256:d8b795bbd9c29b84f85dbe5ef273d968fead350c96589620d0eae01b0bb0c825"},
-]
-
-[package.dependencies]
-defusedxml = ">=0.7.1,<0.8.0"
-jsonref = ">=1.1.0,<2.0.0"
-jsonschema = ">=4.16.0,<5.0.0"
-latex2mathml = ">=3.77.0,<4.0.0"
-pandas = ">=2.1.4,<4.0.0"
-pillow = ">=10.0.0,<13.0.0"
-pydantic = ">=2.6.0,<2.10.0 || >2.10.0,<2.10.1 || >2.10.1,<2.10.2 || >2.10.2,<3.0.0"
-pydantic-settings = ">=2.14.0"
-pyyaml = ">=5.1,<7.0.0"
-semchunk = {version = ">=2.2.0,<4.0.0", optional = true, markers = "extra == \"chunking\""}
-tabulate = ">=0.9.0,<0.11.0"
-transformers = {version = ">=4.34.0,<6.0.0", optional = true, markers = "extra == \"chunking\""}
-tree-sitter = {version = ">=0.25.0,<0.27.0", optional = true, markers = "extra == \"chunking\""}
-tree-sitter-c = {version = ">=0.23.4", optional = true, markers = "extra == \"chunking\""}
-tree-sitter-javascript = {version = ">=0.23.1", optional = true, markers = "extra == \"chunking\""}
-tree-sitter-python = {version = ">=0.23.6", optional = true, markers = "extra == \"chunking\""}
-tree-sitter-typescript = {version = ">=0.23.2", optional = true, markers = "extra == \"chunking\""}
-typer = ">=0.12.5,<0.25.0"
-typing-extensions = ">=4.12.2,<5.0.0"
-
-[package.extras]
-chunking = ["semchunk (>=2.2.0,<4.0.0)", "transformers (>=4.34.0,<6.0.0)", "tree-sitter (>=0.25.0,<0.27.0)", "tree-sitter-c (>=0.23.4)", "tree-sitter-javascript (>=0.23.1)", "tree-sitter-python (>=0.23.6)", "tree-sitter-typescript (>=0.23.2)"]
-chunking-openai = ["semchunk (>=2.2.0,<4.0.0)", "tiktoken (>=0.9.0,<0.13.0)", "tree-sitter (>=0.25.0,<0.27.0)", "tree-sitter-c (>=0.23.4)", "tree-sitter-javascript (>=0.23.1)", "tree-sitter-python (>=0.23.6)", "tree-sitter-typescript (>=0.23.2)"]
-examples = ["datasets (>=4.0.0)", "matplotlib (>=3.7.0)", "openpyxl (>=3.1.5)"]
 
 [[package]]
 name = "docling-core"
@@ -1091,6 +1022,47 @@ typing-extensions = ">=4.12.2,<5.0.0"
 [package.extras]
 chunking = ["semchunk (>=2.2.0,<4.0.0)", "transformers (>=4.34.0,<5.0.dev0 || >=5.4.dev0,<5.9.0) ; sys_platform == \"darwin\"", "transformers (>=4.34.0,<5.0.dev0 || >=5.4.dev0,<6.0.0) ; sys_platform != \"darwin\"", "tree-sitter (>=0.25.0,<0.27.0)", "tree-sitter-c (>=0.23.4)", "tree-sitter-javascript (>=0.23.1)", "tree-sitter-python (>=0.23.6)", "tree-sitter-typescript (>=0.23.2)"]
 chunking-openai = ["semchunk (>=2.2.0,<4.0.0)", "tiktoken (>=0.9.0,<0.13.0)", "tree-sitter (>=0.25.0,<0.27.0)", "tree-sitter-c (>=0.23.4)", "tree-sitter-javascript (>=0.23.1)", "tree-sitter-python (>=0.23.6)", "tree-sitter-typescript (>=0.23.2)"]
+examples = ["datasets (>=4.0.0)", "matplotlib (>=3.7.0)", "openpyxl (>=3.1.5)"]
+
+[[package]]
+name = "docling-core"
+version = "2.94.1"
+description = "A python library to define and validate data types in Docling."
+optional = false
+python-versions = "<4.0,>=3.10"
+groups = ["main"]
+markers = "sys_platform == \"darwin\""
+files = [
+    {file = "docling_core-2.94.1-py3-none-any.whl", hash = "sha256:b7399ce466dcc8735b7981918f39525c01fce981eefbc6f46ee291c1feeea0dc"},
+    {file = "docling_core-2.94.1.tar.gz", hash = "sha256:830dc840b2edde03b6e49529bba61975b5d72a4000181b34d632a4dcd19e2e6c"},
+]
+
+[package.dependencies]
+defusedxml = ">=0.7.1,<0.8.0"
+doclang = ">=0.7,<0.8"
+jsonref = ">=1.1.0,<2.0.0"
+jsonschema = ">=4.16.0,<5.0.0"
+latex2mathml = ">=3.77.0,<4.0.0"
+pandas = ">=2.1.4,<4.0.0"
+pillow = ">=10.0.0,<13.0.0"
+pydantic = ">=2.6.0,<2.10.0 || >2.10.0,<2.10.1 || >2.10.1,<2.10.2 || >2.10.2,<3.0.0"
+pydantic-settings = ">=2.14.0"
+pyyaml = ">=5.1,<7.0.0"
+semchunk = {version = ">=2.2.0,<4.0.0", optional = true, markers = "extra == \"chunking\""}
+tabulate = ">=0.9.0,<0.11.0"
+transformers = {version = ">=4.42.0,<6.0.0", optional = true, markers = "extra == \"chunking\""}
+tree-sitter = {version = ">=0.25.0,<0.27.0", optional = true, markers = "extra == \"chunking\""}
+tree-sitter-c = {version = ">=0.23.4", optional = true, markers = "extra == \"chunking\""}
+tree-sitter-javascript = {version = ">=0.23.1", optional = true, markers = "extra == \"chunking\""}
+tree-sitter-python = {version = ">=0.23.6", optional = true, markers = "extra == \"chunking\""}
+tree-sitter-typescript = {version = ">=0.23.2", optional = true, markers = "extra == \"chunking\""}
+typer = ">=0.12.5,<0.27.0"
+typing-extensions = ">=4.12.2,<5.0.0"
+
+[package.extras]
+chunking = ["semchunk (>=2.2.0,<4.0.0)", "transformers (>=4.42.0,<6.0.0)", "tree-sitter (>=0.25.0,<0.27.0)", "tree-sitter-c (>=0.23.4)", "tree-sitter-javascript (>=0.23.1)", "tree-sitter-python (>=0.23.6)", "tree-sitter-typescript (>=0.23.2)"]
+chunking-openai = ["semchunk (>=2.2.0,<4.0.0)", "tiktoken (>=0.9.0,<0.13.0)", "tree-sitter (>=0.25.0,<0.27.0)", "tree-sitter-c (>=0.23.4)", "tree-sitter-javascript (>=0.23.1)", "tree-sitter-python (>=0.23.6)", "tree-sitter-typescript (>=0.23.2)"]
+dclq = ["click (>=8.0.0)", "doclang (>=0.7,<0.8)", "lxml (>=6.0.2)", "typer (>=0.15.1,<0.25.0)"]
 examples = ["datasets (>=4.0.0)", "matplotlib (>=3.7.0)", "openpyxl (>=3.1.5)"]
 
 [[package]]
@@ -1159,51 +1131,11 @@ opencv-python-headless = ["opencv-python-headless (>=4.6.0.66,<5.0.0.0)"]
 
 [[package]]
 name = "docling-parse"
-version = "6.2.0"
-description = "Simple package to extract text with coordinates from programmatic PDFs"
-optional = false
-python-versions = ">=3.10"
-groups = ["main"]
-markers = "sys_platform == \"darwin\""
-files = [
-    {file = "docling_parse-6.2.0-cp310-cp310-macosx_14_0_arm64.whl", hash = "sha256:250c01fa68b56e35c11f884dce6f061bd7aebb21a5c146aa72b8c52d29f78bfd"},
-    {file = "docling_parse-6.2.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:7209e39385adc0dffc305d9c3ba4f8098ca9723a82f1f9f343369072d7934704"},
-    {file = "docling_parse-6.2.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f078d2cb305207335d2ec0980ad1712ae78cddd570f75ac5b603f6a3bf3c3406"},
-    {file = "docling_parse-6.2.0-cp310-cp310-win_amd64.whl", hash = "sha256:8132631b37b9a1e4fc6c25f470c76f8e2f54b8a4c112227aaccbe2e77f32b504"},
-    {file = "docling_parse-6.2.0-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:a6d915c2521a556946f75f66b46a9692a315c8ded318f695804e90f32c420bb0"},
-    {file = "docling_parse-6.2.0-cp311-cp311-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:06d3aa622950952fe868e8b576026e9e1a5295e1c07f10e4e809f8745548ac73"},
-    {file = "docling_parse-6.2.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:aa428204bfcd07d7fd28bfe0aae3511c17d1167048313c7347880d3a03201038"},
-    {file = "docling_parse-6.2.0-cp311-cp311-win_amd64.whl", hash = "sha256:883ef9e545f4545ab50ce6cf27df9dc9816e4d9c5e07cfb37d8bfa672c10c948"},
-    {file = "docling_parse-6.2.0-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:6085c2d4611c16fb9b6b96472e4d3ecea4ca701d9b8be58776b4d2572cd98cdc"},
-    {file = "docling_parse-6.2.0-cp312-cp312-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:33093dfb3c8105feb618887a127b19327e09fae7bf374eecbf5d10663d474a1e"},
-    {file = "docling_parse-6.2.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:05f6b1e15408741953ee4beb61442168c3267489634ce16ebd8e9214deec621e"},
-    {file = "docling_parse-6.2.0-cp312-cp312-win_amd64.whl", hash = "sha256:6f2be525e2b117afe84033375354c1cee4f77a4598807ca75d5873fd507a52e1"},
-    {file = "docling_parse-6.2.0-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:c5377a1061d10ed1ac951ae9d3b08a0c0ab7a9277481d58d78284af8e533496c"},
-    {file = "docling_parse-6.2.0-cp313-cp313-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:6ffc27d4f02a119049904267712429865b028214e1ebaa1ced7bf3ce618b078a"},
-    {file = "docling_parse-6.2.0-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:f8d269e41c7fc2d12f22418b163920f0c4ab11d63b945d3425e28d6d2aef30c5"},
-    {file = "docling_parse-6.2.0-cp313-cp313-win_amd64.whl", hash = "sha256:b2fb3942929eba7bebea5ba62e79d2fd789705367b62987d1928b120b8b1dd0a"},
-    {file = "docling_parse-6.2.0-cp314-cp314-macosx_14_0_arm64.whl", hash = "sha256:b31d928a08a8b3c04d5b3a40a03cdb85130c7aa204c1cc41319cb7fc2b15f960"},
-    {file = "docling_parse-6.2.0-cp314-cp314-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:ceb56f53d27dc3e8a85142c783a80ee91a37d4890b2346d52de439f3a0ca2773"},
-    {file = "docling_parse-6.2.0-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:81514a0109e394be018fb8283ab4f2716b829e291ae4bd2daa6a814fdbd6c0d0"},
-    {file = "docling_parse-6.2.0-cp314-cp314-win_amd64.whl", hash = "sha256:1a5cd6cf5e2f8f9deb608fb7302d8fc1fa26c048406aa0c2073d4167e09af113"},
-    {file = "docling_parse-6.2.0.tar.gz", hash = "sha256:f13d6c49e3b5f9caaf0d626e0dcc7948c5b4700d0eae0559ec353ed07c4f2f50"},
-]
-
-[package.dependencies]
-docling-core = ">=2.65.2"
-pillow = ">=10.0.0,<13.0.0"
-pydantic = ">=2.0.0"
-pywin32 = {version = ">=305", markers = "sys_platform == \"win32\""}
-tabulate = ">=0.9.0,<1.0.0"
-
-[[package]]
-name = "docling-parse"
 version = "7.7.0"
 description = "Simple package to extract text with coordinates from programmatic PDFs"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
-markers = "sys_platform != \"darwin\""
 files = [
     {file = "docling_parse-7.7.0-cp310-cp310-macosx_14_0_arm64.whl", hash = "sha256:bf36d866d49808bfec57032260eb960bef1f14b72890a913eff6146b05193b2d"},
     {file = "docling_parse-7.7.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:03c24be6726f0b20a1587dbc1025d75b830506c512c473a7fb421c28a187cd33"},
@@ -1241,97 +1173,11 @@ pywin32 = {version = ">=305", markers = "sys_platform == \"win32\""}
 
 [[package]]
 name = "docling-slim"
-version = "2.99.0"
-description = "Modular version of the Docling package: SDK and CLI for parsing PDF, DOCX, HTML, and more, to a unified document representation for powering downstream workflows such as gen AI applications."
-optional = false
-python-versions = "<4.0,>=3.10"
-groups = ["main"]
-markers = "sys_platform == \"darwin\""
-files = [
-    {file = "docling_slim-2.99.0-py3-none-any.whl", hash = "sha256:f67e31ca3cc39c5b19df3cfcb8fbe7bcc5ef29ffff320bbafca56e3b9ce40f24"},
-    {file = "docling_slim-2.99.0.tar.gz", hash = "sha256:b05150cda69e4c24c85aa32d2e329f21188dd4304547928eab32d8bb8b645bba"},
-]
-
-[package.dependencies]
-accelerate = {version = ">=1.0.0,<2", optional = true, markers = "extra == \"standard\""}
-beautifulsoup4 = {version = ">=4.12.3,<5.0.0", optional = true, markers = "extra == \"standard\""}
-certifi = ">=2024.7.4"
-defusedxml = {version = ">=0.7.1,<0.8.0", optional = true, markers = "extra == \"standard\""}
-docling-core = [
-    {version = ">=2.77.1,<3.0.0"},
-    {version = ">=2.73.0,<3.0.0", extras = ["chunking"], optional = true, markers = "extra == \"standard\""},
-]
-docling-ibm-models = {version = ">=3.13.0,<4", optional = true, markers = "extra == \"standard\""}
-docling-parse = {version = ">=6.2.0,<7.0.0", optional = true, markers = "extra == \"standard\""}
-filetype = ">=1.2.0,<2.0.0"
-httpx = {version = ">=0.28,<1.0.0", optional = true, markers = "extra == \"standard\""}
-huggingface-hub = {version = ">=0.23,<2", optional = true, markers = "extra == \"standard\""}
-lxml = {version = ">=4.0.0,<7.0.0", optional = true, markers = "extra == \"standard\""}
-mail-parser = {version = ">=4.1.4,<5.0.0", optional = true, markers = "extra == \"standard\""}
-marko = {version = ">=2.1.2,<3.0.0", optional = true, markers = "extra == \"standard\""}
-numpy = {version = ">=1.24.0,<3.0.0", optional = true, markers = "extra == \"standard\""}
-openpyxl = {version = ">=3.1.5,<4.0.0", optional = true, markers = "extra == \"standard\""}
-pillow = {version = ">=10.0.0,<13.0.0", optional = true, markers = "extra == \"standard\""}
-pluggy = ">=1.0.0,<2.0.0"
-polyfactory = {version = ">=2.22.2", optional = true, markers = "extra == \"standard\""}
-pydantic = ">=2.0.0,<3.0.0"
-pydantic-settings = ">=2.3.0,<3.0.0"
-pylatexenc = {version = ">=2.10,<3.0", optional = true, markers = "extra == \"standard\""}
-pypdfium2 = {version = ">=4.30.0,<4.30.1 || >4.30.1,<6.0.0", optional = true, markers = "extra == \"standard\""}
-python-docx = {version = ">=1.1.2,<2.0.0", optional = true, markers = "extra == \"standard\""}
-python-pptx = {version = ">=1.0.2,<2.0.0", optional = true, markers = "extra == \"standard\""}
-rapidocr = {version = ">=3.8,<4.0.0", optional = true, markers = "extra == \"standard\""}
-requests = ">=2.32.2,<3.0.0"
-rich = {version = ">=13.0.0", optional = true, markers = "extra == \"standard\""}
-rtree = {version = ">=1.3.0,<2.0.0", optional = true, markers = "extra == \"standard\""}
-scipy = {version = ">=1.6.0,<2.0.0", optional = true, markers = "extra == \"standard\""}
-torch = {version = ">=2.2.2,<3.0.0", optional = true, markers = "extra == \"standard\""}
-torchvision = {version = ">=0,<1", optional = true, markers = "extra == \"standard\""}
-tqdm = ">=4.65.0,<5.0.0"
-typer = {version = ">=0.12.5,<0.22.0", optional = true, markers = "extra == \"standard\""}
-websockets = {version = ">=14.0,<17.0", optional = true, markers = "extra == \"standard\""}
-
-[package.extras]
-all = ["accelerate (>=1.0.0,<2)", "accelerate (>=1.2.1,<2.0.0)", "arelle-release (>=2.38.17,<3.0.0)", "beautifulsoup4 (>=4.12.3,<5.0.0)", "defusedxml (>=0.7.1,<0.8.0)", "docling-core[chunking] (>=2.73.0,<3.0.0)", "docling-ibm-models (>=3.13.0,<4)", "docling-parse (>=6.2.0,<7.0.0)", "easyocr (>=1.7,<2.0)", "httpx (>=0.28,<1.0.0)", "huggingface-hub (>=0.23,<2)", "lxml (>=4.0.0,<7.0.0)", "mail-parser (>=4.1.4,<5.0.0)", "marko (>=2.1.2,<3.0.0)", "mlx-vlm (>=0.4.3,<1.0.0) ; python_version >= \"3.10\" and sys_platform == \"darwin\" and platform_machine == \"arm64\"", "mlx-whisper (>=0.4.3) ; python_version >= \"3.10\" and sys_platform == \"darwin\" and platform_machine == \"arm64\"", "numba (>=0.63.0)", "numpy (>=1.24.0,<3.0.0)", "ocrmac (>=1.0.0,<2.0.0) ; sys_platform == \"darwin\"", "onnxruntime (<1.24) ; python_version < \"3.14\" and sys_platform == \"darwin\"", "onnxruntime-gpu (<1.24) ; python_version < \"3.14\" and (sys_platform == \"linux\" or sys_platform == \"win32\")", "openai-whisper (>=20250625)", "openpyxl (>=3.1.5,<4.0.0)", "pandas (>=2.1.4,<4.0.0)", "peft (>=0.18.1)", "pillow (>=10.0.0,<13.0.0)", "playwright (>=1.58.0)", "polyfactory (>=2.22.2)", "pylatexenc (>=2.10,<3.0)", "pypdfium2 (>=4.30.0,!=4.30.1,<6.0.0)", "python-docx (>=1.1.2,<2.0.0)", "python-pptx (>=1.0.2,<2.0.0)", "qwen-vl-utils (>=0.0.11)", "rapidocr (>=3.8,<4.0.0)", "rich (>=13.0.0)", "rtree (>=1.3.0,<2.0.0)", "scikit-image (>=0.19)", "scipy (>=1.6.0,<2.0.0)", "tesserocr (>=2.7.1,<3.0.0)", "torch (>=2.2.2,<3.0.0)", "torchvision (>=0,<1)", "transformers (>=4.42.0,<5.0.dev0 || >=5.4.dev0,<5.9.0) ; sys_platform == \"darwin\"", "transformers (>=4.42.0,<5.0.dev0 || >=5.4.dev0,<6.0.0) ; sys_platform != \"darwin\"", "tritonclient[grpc] (>=2.65.0,<3.0.0)", "typer (>=0.12.5,<0.22.0)", "websockets (>=14.0,<17.0)"]
-cli = ["rich (>=13.0.0)", "typer (>=0.12.5,<0.22.0)"]
-convert-core = ["numpy (>=1.24.0,<3.0.0)", "pillow (>=10.0.0,<13.0.0)", "rtree (>=1.3.0,<2.0.0)", "scipy (>=1.6.0,<2.0.0)"]
-extract-core = ["numpy (>=1.24.0,<3.0.0)", "pillow (>=10.0.0,<13.0.0)", "polyfactory (>=2.22.2)", "rtree (>=1.3.0,<2.0.0)", "scipy (>=1.6.0,<2.0.0)"]
-feat-chunking = ["docling-core[chunking] (>=2.73.0,<3.0.0)"]
-feat-ocr-easyocr = ["easyocr (>=1.7,<2.0)", "scikit-image (>=0.19)"]
-feat-ocr-mac = ["ocrmac (>=1.0.0,<2.0.0) ; sys_platform == \"darwin\""]
-feat-ocr-rapidocr = ["rapidocr (>=3.8,<4.0.0)"]
-feat-ocr-rapidocr-onnx = ["onnxruntime (>=1.7.0,<2.0.0) ; python_version < \"3.14\"", "rapidocr (>=3.8,<4.0.0)"]
-feat-ocr-tesserocr = ["pandas (>=2.1.4,<4.0.0)", "tesserocr (>=2.7.1,<3.0.0)"]
-format-audio = ["mlx-whisper (>=0.4.3) ; python_version >= \"3.10\" and sys_platform == \"darwin\" and platform_machine == \"arm64\"", "numba (>=0.63.0)", "openai-whisper (>=20250625)"]
-format-docx = ["python-docx (>=1.1.2,<2.0.0)"]
-format-email = ["beautifulsoup4 (>=4.12.3,<5.0.0)", "lxml (>=4.0.0,<7.0.0)", "mail-parser (>=4.1.4,<5.0.0)"]
-format-html = ["beautifulsoup4 (>=4.12.3,<5.0.0)", "lxml (>=4.0.0,<7.0.0)"]
-format-html-render = ["playwright (>=1.58.0)"]
-format-latex = ["pylatexenc (>=2.10,<3.0)"]
-format-markdown = ["marko (>=2.1.2,<3.0.0)"]
-format-office = ["openpyxl (>=3.1.5,<4.0.0)", "python-docx (>=1.1.2,<2.0.0)", "python-pptx (>=1.0.2,<2.0.0)"]
-format-pdf = ["docling-parse (>=6.2.0,<7.0.0)", "pypdfium2 (>=4.30.0,!=4.30.1,<6.0.0)"]
-format-pdf-docling = ["docling-parse (>=6.2.0,<7.0.0)", "pypdfium2 (>=4.30.0,!=4.30.1,<6.0.0)"]
-format-pdf-pypdfium2 = ["pypdfium2 (>=4.30.0,!=4.30.1,<6.0.0)"]
-format-pptx = ["python-pptx (>=1.0.2,<2.0.0)"]
-format-web = ["beautifulsoup4 (>=4.12.3,<5.0.0)", "lxml (>=4.0.0,<7.0.0)", "marko (>=2.1.2,<3.0.0)"]
-format-xlsx = ["openpyxl (>=3.1.5,<4.0.0)"]
-format-xml-xbrl = ["arelle-release (>=2.38.17,<3.0.0)"]
-models-local = ["accelerate (>=1.0.0,<2)", "defusedxml (>=0.7.1,<0.8.0)", "docling-ibm-models (>=3.13.0,<4)", "huggingface-hub (>=0.23,<2)", "torch (>=2.2.2,<3.0.0)", "torchvision (>=0,<1)"]
-models-onnxruntime = ["onnxruntime (<1.24) ; python_version < \"3.14\" and sys_platform == \"darwin\"", "onnxruntime-gpu (<1.24) ; python_version < \"3.14\" and (sys_platform == \"linux\" or sys_platform == \"win32\")"]
-models-remote = ["tritonclient[grpc] (>=2.65.0,<3.0.0)"]
-models-vlm-inline = ["accelerate (>=1.2.1,<2.0.0)", "mlx-vlm (>=0.4.3,<1.0.0) ; python_version >= \"3.10\" and sys_platform == \"darwin\" and platform_machine == \"arm64\"", "peft (>=0.18.1)", "qwen-vl-utils (>=0.0.11)", "transformers (>=4.42.0,<5.0.dev0 || >=5.4.dev0,<5.9.0) ; sys_platform == \"darwin\"", "transformers (>=4.42.0,<5.0.dev0 || >=5.4.dev0,<6.0.0) ; sys_platform != \"darwin\""]
-service-client = ["httpx (>=0.28,<1.0.0)", "websockets (>=14.0,<17.0)"]
-standard = ["accelerate (>=1.0.0,<2)", "beautifulsoup4 (>=4.12.3,<5.0.0)", "defusedxml (>=0.7.1,<0.8.0)", "docling-core[chunking] (>=2.73.0,<3.0.0)", "docling-ibm-models (>=3.13.0,<4)", "docling-parse (>=6.2.0,<7.0.0)", "httpx (>=0.28,<1.0.0)", "huggingface-hub (>=0.23,<2)", "lxml (>=4.0.0,<7.0.0)", "mail-parser (>=4.1.4,<5.0.0)", "marko (>=2.1.2,<3.0.0)", "numpy (>=1.24.0,<3.0.0)", "openpyxl (>=3.1.5,<4.0.0)", "pillow (>=10.0.0,<13.0.0)", "polyfactory (>=2.22.2)", "pylatexenc (>=2.10,<3.0)", "pypdfium2 (>=4.30.0,!=4.30.1,<6.0.0)", "python-docx (>=1.1.2,<2.0.0)", "python-pptx (>=1.0.2,<2.0.0)", "rapidocr (>=3.8,<4.0.0)", "rich (>=13.0.0)", "rtree (>=1.3.0,<2.0.0)", "scipy (>=1.6.0,<2.0.0)", "torch (>=2.2.2,<3.0.0)", "torchvision (>=0,<1)", "typer (>=0.12.5,<0.22.0)", "websockets (>=14.0,<17.0)"]
-
-[[package]]
-name = "docling-slim"
 version = "2.111.0"
 description = "Modular version of the Docling package: SDK and CLI for parsing PDF, DOCX, HTML, and more, to a unified document representation for powering downstream workflows such as gen AI applications."
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
-markers = "sys_platform != \"darwin\""
 files = [
     {file = "docling_slim-2.111.0-py3-none-any.whl", hash = "sha256:58683696e1342380d1a4676100a33493a61d3243c322f73286799435ca7e7b9e"},
     {file = "docling_slim-2.111.0.tar.gz", hash = "sha256:c46d801582a299730b36ba779c2e4465207e38f7b1062ae4112fcdd439b68d3a"},
@@ -1533,39 +1379,6 @@ transformers = ">=4.44.2,<6.0.0"
 
 [package.extras]
 finetune = ["deepspeed", "flash-attn"]
-
-[[package]]
-name = "flashrank"
-version = "0.2.10"
-description = "Ultra lite & Super fast SoTA cross-encoder based re-ranking for your search & retrieval pipelines."
-optional = false
-python-versions = ">=3.6"
-groups = ["main"]
-files = [
-    {file = "FlashRank-0.2.10-py3-none-any.whl", hash = "sha256:5d3272ae657d793c132d1e7917ed9e2adf49e0e1c60735583a67b051c6f0434a"},
-    {file = "FlashRank-0.2.10.tar.gz", hash = "sha256:f8f82a25c32fdfc668a09dc4089421d6aab8e7f71308424b541f40bb3f01d9db"},
-]
-
-[package.dependencies]
-numpy = "*"
-onnxruntime = "*"
-requests = "*"
-tokenizers = "*"
-tqdm = "*"
-
-[package.extras]
-listwise = ["llama-cpp-python (==0.2.76)"]
-
-[[package]]
-name = "flatbuffers"
-version = "25.12.19"
-description = "The FlatBuffers serialization format for Python"
-optional = false
-python-versions = "*"
-groups = ["main"]
-files = [
-    {file = "flatbuffers-25.12.19-py2.py3-none-any.whl", hash = "sha256:7634f50c427838bb021c2d66a3d1168e9d199b0607e6329399f04846d42e20b4"},
-]
 
 [[package]]
 name = "frozenlist"
@@ -3620,50 +3433,6 @@ files = [
 [package.dependencies]
 antlr4-python3-runtime = "==4.9.*"
 PyYAML = ">=5.1.0"
-
-[[package]]
-name = "onnxruntime"
-version = "1.28.0"
-description = "ONNX Runtime is a runtime accelerator for Machine Learning models"
-optional = false
-python-versions = ">=3.11"
-groups = ["main"]
-files = [
-    {file = "onnxruntime-1.28.0-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:f5c5daabd28aad610f83fdcf32acec8fb57e6adc6c6a39fe2a3c755db957b410"},
-    {file = "onnxruntime-1.28.0-cp311-cp311-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:8d66f9ceb29909c70839e4e4fb3435c7b490050d8f162bd5f3aba4ca01ee517f"},
-    {file = "onnxruntime-1.28.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:a166b78ee04f3a37fa1ef82034b6a3ce96d9684e582d4d30b296de83e9998bb5"},
-    {file = "onnxruntime-1.28.0-cp311-cp311-win_amd64.whl", hash = "sha256:0d650aeee29368414367b65529e90afe4bf1bab76254789063b8b2f7ea3013c8"},
-    {file = "onnxruntime-1.28.0-cp311-cp311-win_arm64.whl", hash = "sha256:0faf85fb447a663c9cdadc39bd6b19bdf7bedded6699e45731b9b36c46fd993d"},
-    {file = "onnxruntime-1.28.0-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:26ff0fdd06efb6c155bae95387a09db1a2be89c7a03e4d0bffd5a171cc2826da"},
-    {file = "onnxruntime-1.28.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:4e81a23df16e7acb9d51b06d30cc098e49315ef9180f97bc2221d167b4b04d9c"},
-    {file = "onnxruntime-1.28.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:0a83bdb70d143cede762b677789bf2a7acca54b3fb82565601d5c30695aa933c"},
-    {file = "onnxruntime-1.28.0-cp312-cp312-win_amd64.whl", hash = "sha256:c35064f9b3c43c81c5d5d282091401d0f1ff22796d93ccade4ea2ece5e137ab8"},
-    {file = "onnxruntime-1.28.0-cp312-cp312-win_arm64.whl", hash = "sha256:e02feeb0165c5f13b4cc954738078d59b90128516ac12b671ee24a530242bf02"},
-    {file = "onnxruntime-1.28.0-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:31410f544674f534c2f27348af52ef81682ca9c8719154bf4d48f0ef23823b1e"},
-    {file = "onnxruntime-1.28.0-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:f649dd6f6452d12a8059888aa489fe519e062e18793dac72b9efa0f9fdb64135"},
-    {file = "onnxruntime-1.28.0-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:54fa221d669282bd8f582708ce4c96010a7e9fb0661f9006b37fe2fedafb73fe"},
-    {file = "onnxruntime-1.28.0-cp313-cp313-win_amd64.whl", hash = "sha256:1a1a19175464665c9b8d50bc916f216cc0b569110045b7bbca8f9f290b186f58"},
-    {file = "onnxruntime-1.28.0-cp313-cp313-win_arm64.whl", hash = "sha256:cfab507abe09d6ffeb817eee07944d452fdc0b00fdcef34cab4db10a45e378c7"},
-    {file = "onnxruntime-1.28.0-cp313-cp313t-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:ac301f53b1930402fc46c368e268acfed02f3207272aaff05070d7e09f96f031"},
-    {file = "onnxruntime-1.28.0-cp313-cp313t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:f7f022a1103cae591c75fc4565589a515f2ddd14a6ac8e8a05812dfeda142e28"},
-    {file = "onnxruntime-1.28.0-cp314-cp314-macosx_14_0_arm64.whl", hash = "sha256:8adff67a3f28257b37cfe945a7e952e4122666aa8c91a0380862e9fd4c2ed19f"},
-    {file = "onnxruntime-1.28.0-cp314-cp314-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:bc2565e487b4896fb988d6383577d875d958e071fc5f6c3550bd5d02ae98264b"},
-    {file = "onnxruntime-1.28.0-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:6afdc83f1317c136e92fc29f5ee9f058de59d87c0b22cee3fdbfbaa0ccc2098a"},
-    {file = "onnxruntime-1.28.0-cp314-cp314-win_amd64.whl", hash = "sha256:f2a3b9e30ce880d4ca54999cb313569e36da4f62eefe25f87be18f43e9a3a4d5"},
-    {file = "onnxruntime-1.28.0-cp314-cp314-win_arm64.whl", hash = "sha256:07fb3cbe990d6bf0ab3c22bfbbfb0e314151266046ea6edb4a07f556b4258c5f"},
-    {file = "onnxruntime-1.28.0-cp314-cp314t-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:e562d6e36a749f6764481c0ddb0f2af3d0b5a3c164291361d08803c557f369af"},
-    {file = "onnxruntime-1.28.0-cp314-cp314t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:4f6e92367ddce1e4d33cf295024f40192be6c6171a09208f515ba169ced06c8e"},
-]
-
-[package.dependencies]
-flatbuffers = "*"
-numpy = ">=1.21.6"
-packaging = "*"
-protobuf = ">=4.25.8"
-
-[package.extras]
-quantization = ["ml_dtypes"]
-symbolic = ["sympy"]
 
 [[package]]
 name = "openai"
@@ -6446,31 +6215,11 @@ tutorials = ["matplotlib", "pandas", "tabulate"]
 
 [[package]]
 name = "typer"
-version = "0.21.2"
-description = "Typer, build great CLIs. Easy to code. Based on Python type hints."
-optional = false
-python-versions = ">=3.9"
-groups = ["main"]
-markers = "sys_platform == \"darwin\""
-files = [
-    {file = "typer-0.21.2-py3-none-any.whl", hash = "sha256:c3d8de54d00347ef90b82131ca946274f017cffb46683ae3883c360fa958f55c"},
-    {file = "typer-0.21.2.tar.gz", hash = "sha256:1abd95a3b675e17ff61b0838ac637fe9478d446d62ad17fa4bb81ea57cc54028"},
-]
-
-[package.dependencies]
-annotated-doc = ">=0.0.2"
-click = ">=8.0.0"
-rich = ">=10.11.0"
-shellingham = ">=1.3.0"
-
-[[package]]
-name = "typer"
 version = "0.24.2"
 description = "Typer, build great CLIs. Easy to code. Based on Python type hints."
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
-markers = "sys_platform != \"darwin\""
 files = [
     {file = "typer-0.24.2-py3-none-any.whl", hash = "sha256:b618bc3d721f9a8d30f3e05565be26416d06e9bcc29d49bc491dc26aba674fa8"},
     {file = "typer-0.24.2.tar.gz", hash = "sha256:ec070dcfca1408e85ee203c6365001e818c3b7fffe686fd07ff2d68095ca0480"},
@@ -7193,4 +6942,4 @@ cffi = ["cffi (>=1.17,<2.0) ; platform_python_implementation != \"PyPy\" and pyt
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.13"
-content-hash = "ce1bee0fbd49f004a5507997892f88d8d0247872b77fe01db61680a1778b967e"
+content-hash = "4aec234458c02fe490a25517012b4fc730f8e12af8dfdd5789e4282fcd01ab36"

@@ -67,8 +67,7 @@ class Settings(BaseSettings):
             f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
         )
     # ── reranker ────────────────────────────────────────────
-    RERANKER_NAME: str = ""
-    RERANKER_CACHE_DIR: str = "/tmp/flashrank_cache"
+    RERANKER_MODEL: str = "BAAI/bge-reranker-v2-m3"
 
     # ── Sentry 崩溃自动捕获 ────────────────────────────────
     SENTRY_DSN: str = ""

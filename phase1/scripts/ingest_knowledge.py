@@ -5,6 +5,7 @@ Phase 1 离线文档摄入脚本
     python scripts/ingest_knowledge.py --file /path/to/document.pdf --kb_id default
     或被 api_main.py 作为模块导入: run_ingest_pipeline(content, filename, kb_id, task_id)
 """
+import hashlib
 import json
 import sys
 import uuid
@@ -41,6 +42,12 @@ from storage.vector_store import VectorStore
 
 logger = get_logger(__name__)
 audit_logger = get_logger("audit")
+
+
+def compute_sha256(content: bytes) -> str:
+    """计算文件内容的 SHA256 十六进制摘要，写入 pipeline_jobs.file_sha256。"""
+    return hashlib.sha256(content).hexdigest()
+
 
 # 独立增加，避免依赖循环
 EMBEDDING_CONFIG = {
@@ -344,12 +351,14 @@ async def main(file_path: str, kb_id: str = "default", fail_on_caption_error: bo
 
     task_id = str(uuid.uuid4())
     store = VectorStore()
+    file_hash = compute_sha256(content)
 
     await store.create_task(
         task_id=task_id,
         kb_id=kb_id,
         source_file=file_path,
         status="PENDING",
+        file_hash=file_hash,
     )
 
     await run_ingest_pipeline(

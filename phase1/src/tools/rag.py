@@ -46,6 +46,32 @@ def _get_ranker():
     if not HAS_FLAG_RERANKER:
         raise RuntimeError("FlagEmbedding 未安装，无法初始化 Reranker")
 
+    # transformers 5.x 移除了 prepare_for_model，FlagEmbedding 1.4.0 仍依赖旧 API，
+    # 此处做兼容补丁：用新版 tokenizer 能力重建旧版 prepare_for_model 行为。
+    try:
+        from transformers import XLMRobertaTokenizer
+
+        if not hasattr(XLMRobertaTokenizer, "prepare_for_model"):
+            def _prepare_for_model_compat(self, *args, **kwargs):
+                q_inp = args[0]
+                d_inp = args[1] if len(args) > 1 else []
+                max_length = kwargs.get("max_length", 512)
+                truncation = kwargs.get("truncation", "longest_first")
+                sep = self.sep_token_id
+                cls = self.cls_token_id
+                input_ids = [cls] + list(q_inp) + [sep] + list(d_inp) + [sep]
+                if truncation == "only_second" and len(input_ids) > max_length:
+                    first = [cls] + list(q_inp) + [sep]
+                    second = list(d_inp)[: max(0, max_length - len(first) - 1)] + [sep]
+                    input_ids = first + second
+                elif len(input_ids) > max_length:
+                    input_ids = input_ids[: max_length - 1] + [sep]
+                return {"input_ids": input_ids, "attention_mask": [1] * len(input_ids)}
+
+            XLMRobertaTokenizer.prepare_for_model = _prepare_for_model_compat
+    except ImportError:
+        pass
+
     model_name = getattr(settings, 'RERANKER_MODEL', 'BAAI/bge-reranker-v2-m3')
     try:
         import torch
