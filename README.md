@@ -99,12 +99,21 @@ flowchart TD
 
 ## 快速开始
 
+**前置依赖**：
+
+- PostgreSQL（含 pgvector 扩展）+ Redis
+- Poetry（Python 依赖管理）
+- Ollama + 已下载模型 `nomic-embed-text`（默认）
+
 ```bash
-cd rag-ingest-gateway
-python3 api_main.py    # 端口 8100
+# 1. 安装 Python 依赖
+poetry install
+
+# 2. 启动 RAG 服务（端口 8100）
+poetry run uvicorn api_main:app --reload --port 8100
 ```
 
-> 前置依赖：PostgreSQL（含 pgvector 扩展）+ Ollama 服务。启动后 `GET /health` 应返回 `{"status":"ok","service":"rag-ingest"}`。
+> 健康检查：`GET http://localhost:8100/health` 应返回 `{"status":"ok","service":"rag-ingest"}`
 
 ---
 
