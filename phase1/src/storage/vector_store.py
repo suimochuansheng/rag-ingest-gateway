@@ -248,13 +248,23 @@ class VectorStore:
             匹配结果列表，每项含 id/content/source_file/kb_id/bm25_score
         """
         processed_query = _chinese_bigram_tokenize(query)
+        # 修复：plainto_tsquery 对所有 bigram 取 AND，长问句几乎无法命中；
+        # 改为 OR 语义（任一 bigram 命中即可），由 ts_rank 决定相关度排序。
+        tokens = [
+            t
+            for t in processed_query.split()
+            if t and t not in {"&", "|", "!", "+", "-", "*", "(", ")", "<", ">", ":"}
+        ]
+        if not tokens:
+            return []
+        tsquery = " | ".join(tokens)
         sql = f"""
             SELECT id, content, source_file, kb_id,
-                   ts_rank(content_tsv, plainto_tsquery('simple', %s)) AS bm25_score
+                   ts_rank(content_tsv, to_tsquery('simple', %s)) AS bm25_score
             FROM {self.table_name}
-            WHERE content_tsv @@ plainto_tsquery('simple', %s)
+            WHERE content_tsv @@ to_tsquery('simple', %s)
         """
-        params = [processed_query, processed_query]
+        params = [tsquery, tsquery]
         if kb_id:
             sql += " AND kb_id = %s"
             params.append(kb_id)

@@ -107,6 +107,7 @@ async def search_knowledge(
     kb_id: str = "default",
     model: str = "nomic-embed",  # ★ 新增参数，用于指定使用的表
     search_mode: str = "vector",  # ★ "vector" | "hybrid" — 检索模式
+    skip_reranker: bool = False,  # ★ 混合检索时跳过网关侧 Reranker（离线评估用）
 ) -> str:
     """端到端语义检索：文本 → Embedding → 检索 → 格式化结果。
 
@@ -153,15 +154,18 @@ async def search_knowledge(
                 "混合检索模式: BM25 + 向量 (RRF), query=%r, kb_id=%s", query, kb_id
             )
         else:
-            results = await store.search(query_vector, kb_id=kb_id, top_k=top_k)
+            # vector 模式用于离线评估：不设相似度阈值，取满 top_k 候选，交给上层 Reranker 精排
+            results = await store.search(
+                query_vector, kb_id=kb_id, top_k=top_k, score_threshold=0.0
+            )
 
         if not results:
             logger.info("检索无结果 (query=%r, kb_id=%s)", query, kb_id)
             return ""
 
-        # 3.5 Reranker 重排序（混合检索模式下对候选集精排）
+        # 3.5 Reranker 重排序（混合检索模式下对候选集精排；离线评估可跳过）
         reranker_used = False
-        if search_mode == "hybrid" and len(results) > top_k:
+        if search_mode == "hybrid" and not skip_reranker and len(results) > top_k:
             try:
                 ranker = _get_ranker()
                 passages_text = [r["content"] for r in results]

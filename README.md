@@ -31,11 +31,11 @@
 代码：`phase1/src/chunking/semantic_chunker.py:175`
 
 ### 3. 中文 Bigram 零依赖 BM25
-PostgreSQL `simple` 分词不识别无空格中文，用字符级 bigram 预处理（"你好世界"→"你好 好世 世界"）让原生 `tsvector` 正常工作。**零外部依赖（不用 jieba/zhparser）**。
-代码：`phase1/src/storage/vector_store.py:14`
+PostgreSQL `simple` 分词不识别无空格中文，用字符级 bigram 预处理（"你好世界"→"你好 好世 世界"）让原生 `tsvector` 正常工作。查询侧用 `to_tsquery` + OR 语义（任一 bigram 命中即召回，由 `ts_rank` 排序），避免 `plainto_tsquery` 全 AND 导致长问句零命中。**零外部依赖（不用 jieba/zhparser）**。
+代码：`phase1/src/storage/vector_store.py:14`、`phase1/src/storage/vector_store.py:250`
 
 ### 4. 三阶段混合检索（向量 + BM25 + RRF + FlagReranker）
-向量与 BM25 各取 Top-10 → RRF 融合排序 → 候选池放大 3 倍 → FlagReranker 交叉编码器精排，失败自动回退 RRF。**rrf_k=60、向量粗筛阈值 0.3**。
+向量与 BM25 各取 Top-10 → RRF 融合排序 → 候选池放大 3 倍 → FlagReranker 交叉编码器精排，失败自动回退 RRF。**rrf_k=60、向量粗筛阈值 0.3**。支持 `skip_reranker=True` 跳过网关侧精排（离线评估由调用方自行 Reranker）；此时 vector 模式取满 top_k 候选（阈值 0.0），保证候选集不丢失。
 代码：`phase1/src/storage/vector_store.py:278`、`phase1/src/tools/rag.py:136`
 
 ### 5. 双模型 Embedding 表隔离
@@ -83,9 +83,33 @@ flowchart TD
     B --> D[BM25 检索 Top-10]
     C --> E[RRF 融合]
     D --> E
-    E --> F[FlagReranker 精排]
+    E --> SK{skip_reranker?}
+    SK -->|否| F[FlagReranker 精排]
+    SK -->|是| G
     F --> G[格式化返回]
 ```
+
+---
+
+## 检索接口
+
+主服务通过 `POST /api/v1/search` 单向调用，请求体参数：
+
+| 参数 | 类型 | 默认值 | 说明 |
+|---|---|---|---|
+| `query` | string | 必填 | 检索查询文本 |
+| `top_k` | int | `3` | 返回结果数量（1~50） |
+| `kb_id` | string | `default` | 知识库 ID |
+| `model` | string | `nomic-embed` | Embedding 模型（`nomic-embed` / `bge-m3`） |
+| `search_mode` | string | `hybrid` | 检索模式：`vector`（纯向量）/ `hybrid`（BM25+向量 RRF 融合） |
+| `skip_reranker` | bool | `false` | 混合检索时跳过网关侧 Reranker（离线评估用，精排由调用方执行） |
+
+> 示例：
+> ```bash
+> curl -X POST http://localhost:8100/api/v1/search \
+>   -H "Content-Type: application/json" \
+>   -d '{"query":"pgvector 写入吞吐","top_k":3,"kb_id":"default","model":"nomic-embed","search_mode":"hybrid","skip_reranker":false}'
+> ```
 
 ---
 

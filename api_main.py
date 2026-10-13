@@ -80,6 +80,10 @@ class SearchRequest(BaseModel):
         default="hybrid",
         description="检索模式: vector(纯向量) 或 hybrid(BM25+向量RRF融合)",
     )
+    skip_reranker: bool = Field(
+        default=False,
+        description="混合检索时跳过网关侧 Reranker（离线评估用，Reranker 由调用方执行）",
+    )
 
 
 class SearchResponse(BaseModel):
@@ -169,6 +173,7 @@ async def search(payload: SearchRequest):
             kb_id=payload.kb_id,
             model=payload.model,
             search_mode=payload.search_mode,
+            skip_reranker=payload.skip_reranker,
         )
     except Exception:
         logger.exception("检索服务内部异常")
